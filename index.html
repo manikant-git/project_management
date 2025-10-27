@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Project Management Web App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(90deg,#647dee,#7f53ac); margin:0; padding:0; }
+    .container { max-width: 700px; margin: 40px auto; background:#fff; border-radius:14px; box-shadow:0 4px 24px #0002; padding:30px; }
+    h2 {margin-bottom:24px;}
+    .form-group { margin-bottom: 18px; }
+    label { font-weight: 600; display: block; margin-bottom: 7px;}
+    input, textarea, select { width:100%; padding:9px; font-size:1rem; border-radius:5px; border:1px solid #ddd;}
+    button { background:#647dee; color:#fff; border:none; padding:11px 28px; border-radius:6px; font-size:1rem; font-weight:600; cursor:pointer; }
+    button:hover { background:#7f53ac; }
+    table { width:100%; border-collapse:collapse; margin-top:24px;}
+    th, td { padding:11px 6px; border-bottom:1px solid #eee; text-align:left;}
+    th { background:#f3f3f5; }
+    tr:hover { background:#f4f2ff;}
+    .actions button { margin-right:8px;}
+    .msg { margin-top: 18px; padding:12px; border-radius:7px;}
+    .msg.success { background:#e3ffe6; color:#1a6f37;}
+    .msg.error { background:#ffe3e3; color:#c13333;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Project Management</h2>
+    <form id="projectForm">
+      <div class="form-group">
+        <label for="name">Project Name</label>
+        <input type="text" id="name" required minlength="3">
+      </div>
+      <div class="form-group">
+        <label for="desc">Description</label>
+        <textarea id="desc" required minlength="10"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="status">Status</label>
+        <select id="status">
+          <option>Active</option>
+          <option>Inactive</option>
+        </select>
+      </div>
+      <button type="submit">Add Project</button>
+      <span id="formMsg" class="msg" style="display:none"></span>
+    </form>
+    <hr>
+    <table id="projectTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+<script>
+  let projects = [];
+  let editId = null;
+
+  function escapeHtml(str){return str.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+
+  function renderProjects() {
+    const tbody = document.querySelector('#projectTable tbody');
+    tbody.innerHTML = projects.map((proj,i)=>`
+      <tr>
+        <td>${proj.id}</td>
+        <td>${escapeHtml(proj.name)}</td>
+        <td>${escapeHtml(proj.desc)}</td>
+        <td>${proj.status}</td>
+        <td>${proj.created}</td>
+        <td class="actions">
+          <button onclick="editProject(${i})">Edit</button>
+          <button onclick="deleteProject(${i})">Delete</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  document.getElementById('projectForm').onsubmit = function(e){
+    e.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const desc = document.getElementById('desc').value.trim();
+    const status = document.getElementById('status').value;
+
+    if(name.length<3 || desc.length<10){
+      showMsg('Minimum 3 chars for name, 10 for desc','error');
+      return;
+    }
+
+    if(editId !== null){
+      projects[editId] = {...projects[editId], name, desc, status};
+      editId = null;
+      showMsg('Project updated','success');
+      this.querySelector('button').textContent = 'Add Project';
+    } else {
+      projects.push({
+        id:Math.floor(Math.random()*100000),
+        name,
+        desc,
+        status,
+        created: new Date().toLocaleString()
+      });
+      showMsg('Project added','success');
+    }
+    this.reset();
+    renderProjects();
+  }
+
+  function editProject(i){
+    const p = projects[i];
+    document.getElementById('name').value = p.name;
+    document.getElementById('desc').value = p.desc;
+    document.getElementById('status').value = p.status;
+    editId = i;
+    document.querySelector('#projectForm button').textContent='Update Project';
+  }
+
+  function deleteProject(i){
+    if(confirm('Delete project?')){
+      projects.splice(i,1);
+      showMsg('Project deleted','success');
+      renderProjects();
+    }
+  }
+
+  function showMsg(msg,type){
+    const el = document.getElementById('formMsg');
+    el.textContent = msg;
+    el.className = 'msg '+type;
+    el.style.display = 'inline-block';
+    setTimeout(()=>el.style.display='none',1800);
+  }
+</script>
+</body>
+</html>
+
