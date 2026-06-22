@@ -1,9 +1,16 @@
 terraform {
   backend "s3" {
     bucket         = "manikanta-tf-state-demo"
-    key            = "ec2/dev.tfstate"
+    key            = "lock-lab/dev.tfstate"
     region         = "eu-north-1"
     dynamodb_table = "terraform-locks"
+  }
+
+  required_providers {
+    time = {
+      source  = "hashicorp/time"
+      version = "~> 0.13"
+    }
   }
 }
 
@@ -11,7 +18,6 @@ provider "aws" {
   region = "eu-north-1"
 }
 
-resource "aws_instance" "test" {
-  ami           = "ami-023b6eace47afd3b4"
-  instance_type = "t3.micro"
+resource "time_sleep" "wait" {
+  create_duration = "300s"
 }
