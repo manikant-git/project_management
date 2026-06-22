@@ -2,7 +2,7 @@ terraform {
   backend "s3" {
     bucket         = "manikanta-tf-state-demo"
     key            = "ec2/dev.tfstate"
-    region         = "ap-south-1"
+    region         = "eu-north-1"
     dynamodb_table = "terraform-locks"
   }
 }
