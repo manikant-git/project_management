@@ -1,7 +1,15 @@
-module "web_server" {
+module "frontend" {
   source = "./modules/ec2"
 
-  instance_name = "my-web-server"
+  instance_name = "frontend-server"
   ami_id         = var.ami_id
-  instance_type  = var.instance_type
+  instance_type  = "t2.micro"
+}
+
+module "backend" {
+  source = "./modules/ec2"
+
+  instance_name = "backend-server"
+  ami_id         = var.ami_id
+  instance_type  = "t2.micro"
 }
