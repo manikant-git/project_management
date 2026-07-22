@@ -1,24 +1,23 @@
-output "instance_id" {
-  value = backend-server.instance_id
+output "frontend_instance_id" {
+  value = module.frontend.instance_id
 }
 
-output "public_ip" {
-  value = backend-server.public_ip
+output "frontend_public_ip" {
+  value = module.frontend.public_ip
 }
 
-output "private_ip" {
-  value = backend-server.private_ip
+output "frontend_private_ip" {
+  value = module.frontend.private_ip
 }
 
-
-output "instance_id" {
-  value = frontend-server.instance_id
+output "backend_instance_id" {
+  value = module.backend.instance_id
 }
 
-output "public_ip" {
-  value = frontend-server.public_ip
+output "backend_public_ip" {
+  value = module.backend.public_ip
 }
 
-output "private_ip" {
-  value = frontend-server.private_ip
+output "backend_private_ip" {
+  value = module.backend.private_ip
 }
