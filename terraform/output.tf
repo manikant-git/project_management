@@ -7,5 +7,5 @@ output "public_ip" {
 }
 
 output "private_ip" {
-  value = aws_instance.this.private_ip
+  value = module.web_server.private_ip
 }
